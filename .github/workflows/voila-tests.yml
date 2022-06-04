@@ -33,7 +33,7 @@ jobs:
     - uses: nanasess/setup-chromedriver@master
       with:
         # Optional: do not specify to match Chrome's version
-        chromedriver-version: '100.0.4896.60'
+        chromedriver-version: '102.0.5005.61'
     - run: |
         export DISPLAY=:99
         chromedriver --url-base=/wd/hub &
@@ -45,3 +45,17 @@ jobs:
         name: quantum-screenshot
         path: './*.png'
 
+  Dokku-dev-deploy:
+    needs: voila
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Push to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@matcloud.xyz:22/osscar-quantum-mechanics'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
